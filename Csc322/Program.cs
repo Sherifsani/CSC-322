@@ -1,8 +1,17 @@
 ﻿using System;
 using Csc322.DesignPatterns.Strategy;
+using Simulation.Interfaces;
 
 namespace Simulation
 {
+    class WhitePerson : Person
+    {
+        public override void Speak(string words)
+        {
+            base.Speak(words);
+        }
+    }
+    
     class Program 
     {
         static void Main(string[] args)
@@ -17,6 +26,10 @@ namespace Simulation
             Console.WriteLine("\nchanging mallardDuck quack behaviour");
             mallardDuck.QuackBehavior = new SqueakQuack();
             mallardDuck.PerformQuack();
+            
+            Person person = new WhitePerson();
+            person.Name = "sherif";
+            person.Speak("I am new to C#, please be nice!");
         }
         
     }
