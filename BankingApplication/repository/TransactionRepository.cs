@@ -1,0 +1,23 @@
+using System.Text.Json;
+using BankingApplication.entity;
+
+namespace BankingApplication.repository;
+
+public class TransactionRepository : Repository<Transaction>
+{
+    protected override string FilePath => "/db/transactions.ndjson";
+
+    public List<Transaction?> getTransactionsByUserId(string userId)
+    {
+        if (!File.Exists(FilePath)) return null;
+        List<Transaction> transactions = new List<Transaction>();
+        foreach (string line in File.ReadLines(FilePath))
+        {
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            Transaction? transaction = JsonSerializer.Deserialize<Transaction>(line);
+            if(transaction.UserId == userId) transactions.Add(transaction);
+        }
+
+        return transactions;
+    }
+}
