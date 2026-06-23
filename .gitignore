@@ -18,6 +18,9 @@ packages/
 *.userosscache
 *.sln.docstates
 
+# Data files (runtime)
+*.ndjson
+
 # OS
 .DS_Store
 Thumbs.db
