@@ -7,8 +7,14 @@ public abstract class Repository<T> where T : IEntity
 {
     protected abstract string FilePath { get; }
     
+    
+    /*
+     * constructor is kept hidden from other classes following a singleton approach
+     * Only one repository<T> should exist in memory to prevent two or more threads from modifying the database
+     */
     protected Repository(){}
-
+    
+    // helper method to get all from the database and load them into memory
     protected List<T> FindAllRaw()
     {
         if (!File.Exists(FilePath)) return new List<T>();
@@ -23,6 +29,7 @@ public abstract class Repository<T> where T : IEntity
         return items;
     }
     
+    //helper method to save records into the database file (it overwrites each time though)
     protected void SaveAllRaw(List<T> items)
     {
         using var writer = new StreamWriter(FilePath, append: false);
