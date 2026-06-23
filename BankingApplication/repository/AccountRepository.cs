@@ -11,7 +11,7 @@ public class AccountRepository : Repository<Account>
     public static AccountRepository Instance => _instance.Value;
 
     private AccountRepository() { }
-    protected override string FilePath => "/db/accounts.ndjson";
+    protected override string FileName => "accounts.ndjson";
 
       public Account? GetAccountByUserId(string userId)                                                                                                                                                      
       {                                                                                                                                                                                                      

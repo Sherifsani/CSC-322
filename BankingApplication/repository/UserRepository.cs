@@ -14,7 +14,7 @@ public class UserRepository : Repository<User>
 
     // Private constructor completely stops external 'new UserRepository()'
     private UserRepository() { }
-    protected override string FilePath => "/db/users.ndjson";
+    protected override string FileName => "users.ndjson";
 
     public User FindByEmail(string email)
     {

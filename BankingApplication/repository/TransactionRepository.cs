@@ -11,7 +11,7 @@ public class TransactionRepository : Repository<Transaction>
     public static TransactionRepository Instance => _instance.Value;
 
     private TransactionRepository() { }
-    protected override string FilePath => "/db/transactions.ndjson";
+    protected override string FileName => "transactions.ndjson";
 
     public List<Transaction?> getTransactionsByUserId(string userId)
     {
