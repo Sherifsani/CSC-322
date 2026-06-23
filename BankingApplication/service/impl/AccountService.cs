@@ -6,10 +6,12 @@ namespace BankingApplication.service.impl;
 public class AccountService : IAccountService
 {
     private readonly AccountRepository _accountRepository;
+    private readonly TransactionService _transactionService;
 
-    public AccountService()
+    public AccountService(TransactionService transactionService)
     {
         _accountRepository = AccountRepository.Instance;
+        _transactionService = transactionService;
     }
 
     public Account CreateAccount(string userId, AccountType accountType)
@@ -19,23 +21,64 @@ public class AccountService : IAccountService
         return account;
     }
 
-    public Account GetAccountById(string id)
-    {
-        return _accountRepository.FindById(id);
-    }
-
     public Account GetAccountByUserId(string userId)
     {
         return _accountRepository.GetAccountByUserId(userId);
     }
 
-    public void DeleteAccount(string id)
+    public void Deposit(string accountId, double amount)
     {
-        _accountRepository.delete(id);
+        Account account = _accountRepository.FindById(accountId);
+        if (account == null)
+        {
+            throw new Exception("Account not found");
+        }
+        if (account.AccountStatus != AccountStatus.Active)
+        {
+            throw new Exception("Account is not active");
+        }
+
+        account.Balance += amount;
+        _accountRepository.Update(account);
+
+        _transactionService.CreateTransaction(account.UserId, accountId, amount, TransactionType.Deposit);
     }
 
-    public List<Account> GetAllAccounts()
+    public void Withdraw(string accountId, double amount)
     {
-        return _accountRepository.FindAll();
+        Account account = _accountRepository.FindById(accountId);
+        if (account == null)
+        {
+            throw new Exception("Account not found");
+        }
+        if (account.AccountStatus != AccountStatus.Active)
+        {
+            throw new Exception("Account is not active");
+        }
+        if (account.Balance < amount)
+        {
+            throw new Exception("Insufficient balance");
+        }
+
+        account.Balance -= amount;
+        _accountRepository.Update(account);
+
+        _transactionService.CreateTransaction(account.UserId, accountId, amount, TransactionType.Withdrawal);
+    }
+
+    public void CloseAccount(string accountId)
+    {
+        Account account = _accountRepository.FindById(accountId);
+        if (account == null)
+        {
+            throw new Exception("Account not found");
+        }
+        if (account.AccountStatus == AccountStatus.Closed)
+        {
+            throw new Exception("Account is already closed");
+        }
+
+        account.AccountStatus = AccountStatus.Closed;
+        _accountRepository.Update(account);
     }
 }

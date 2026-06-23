@@ -6,44 +6,41 @@ namespace BankingApplication.service.impl;
 public class UserService : IUserService
 {
     private readonly UserRepository _userRepository;
+    private readonly AccountService _accountService;
 
-    public UserService()
+    public UserService(AccountService accountService)
     {
         _userRepository = UserRepository.Instance;
+        _accountService = accountService;
     }
 
-    public User registerUser(User user)
+    public User Register(string name, string email, string password)
     {
-        User existingUser = _userRepository.FindByEmail(user.Email);
-        if (existingUser != null)
+        User existing = _userRepository.FindByEmail(email);
+        if (existing != null)
         {
-            throw new Exception("User already exists with email " + user.Email);
+            throw new Exception("User already exists with email " + email);
         }
+
+        User user = new User(name, email, password);
         _userRepository.Add(user);
+
+        _accountService.CreateAccount(user.Id, AccountType.Savings);
+
         return user;
     }
 
-    public User GetUserByEmail(string email)
+    public User Login(string email, string password)
     {
-        return _userRepository.FindByEmail(email);
-    }
-
-    public User GetUserById(string id)
-    {
-        return _userRepository.FindById(id);
-    }
-
-    // public void UpdateUser(User user)
-    // {
-    //     User existingUser = _userRepository.FindByEmail(user.Email);
-    //     if (existingUser != null)
-    //     {
-    //         
-    //     }
-    // }
-
-    public void DeleteUser(string id)
-    {
-        _userRepository.delete(id);
+        User user = _userRepository.FindByEmail(email);
+        if (user == null)
+        {
+            throw new Exception("No account found with email " + email);
+        }
+        if (user.Password != password)
+        {
+            throw new Exception("Incorrect password");
+        }
+        return user;
     }
 }

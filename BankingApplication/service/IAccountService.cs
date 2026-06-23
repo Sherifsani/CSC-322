@@ -4,9 +4,8 @@ namespace BankingApplication.service;
 
 public interface IAccountService
 {
-    public Account CreateAccount(string userId, AccountType accountType);
-    public Account GetAccountById(string id);
     public Account GetAccountByUserId(string userId);
-    public void DeleteAccount(string id);
-    public List<Account> GetAllAccounts();
+    public void Deposit(string accountId, double amount);
+    public void Withdraw(string accountId, double amount);
+    public void CloseAccount(string accountId);
 }
