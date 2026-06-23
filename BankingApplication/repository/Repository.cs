@@ -5,16 +5,17 @@ namespace BankingApplication.repository;
 
 public abstract class Repository<T> where T : IEntity
 {
-    protected abstract string FilePath { get; }
+    private static readonly string DbDirectory = Path.GetFullPath(
+        Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "repository", "db"));
+
+    protected abstract string FileName { get; }
+    protected string FilePath => Path.Combine(DbDirectory, FileName);
+
+    protected Repository()
+    {
+        Directory.CreateDirectory(DbDirectory);
+    }
     
-    
-    /*
-     * constructor is kept hidden from other classes following a singleton approach
-     * Only one repository<T> should exist in memory to prevent two or more threads from modifying the database
-     */
-    protected Repository(){}
-    
-    // helper method to get all from the database and load them into memory
     protected List<T> FindAllRaw()
     {
         if (!File.Exists(FilePath)) return new List<T>();
@@ -48,6 +49,17 @@ public abstract class Repository<T> where T : IEntity
     {
         using var writer = new StreamWriter(FilePath, append: true);
         writer.WriteLine(JsonSerializer.Serialize(item));
+    }
+
+    public virtual void Update(T item)
+    {
+        List<T> items = FindAllRaw();
+        var index = items.FindIndex(x => x.Id == item.Id);
+        if (index >= 0)
+        {
+            items[index] = item;
+            SaveAllRaw(items);
+        }
     }
 
     public virtual void delete(string id)
