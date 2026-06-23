@@ -5,6 +5,12 @@ namespace BankingApplication.repository;
 
 public class TransactionRepository : Repository<Transaction>
 {
+    private static readonly Lazy<TransactionRepository> _instance =
+        new Lazy<TransactionRepository>(() => new TransactionRepository());
+
+    public static TransactionRepository Instance => _instance.Value;
+
+    private TransactionRepository() { }
     protected override string FilePath => "/db/transactions.ndjson";
 
     public List<Transaction?> getTransactionsByUserId(string userId)

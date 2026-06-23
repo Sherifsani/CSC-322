@@ -5,6 +5,15 @@ namespace BankingApplication.repository;
 
 public class UserRepository : Repository<User>
 {
+    // Thread-safe, lazy-initialized instance holder
+    private static readonly Lazy<UserRepository> _instance = 
+        new Lazy<UserRepository>(() => new UserRepository());
+
+    // Public entry point to access the one and only instance
+    public static UserRepository Instance => _instance.Value;
+
+    // Private constructor completely stops external 'new UserRepository()'
+    private UserRepository() { }
     protected override string FilePath => "/db/users.ndjson";
 
     public User FindByEmail(string email)

@@ -5,6 +5,12 @@ namespace BankingApplication.repository;
 
 public class AccountRepository : Repository<Account>
 {
+    private static readonly Lazy<AccountRepository> _instance =
+        new Lazy<AccountRepository>(() => new AccountRepository());
+
+    public static AccountRepository Instance => _instance.Value;
+
+    private AccountRepository() { }
     protected override string FilePath => "/db/accounts.ndjson";
 
       public Account? GetAccountByUserId(string userId)                                                                                                                                                      
