@@ -3,19 +3,24 @@ using BankingApplication.entity;
 
 namespace BankingApplication.repository;
 
+/// <summary>
+/// Repository for persisting and retrieving <see cref="User"/> entities to/from a JSON file.
+/// Implements the singleton pattern.
+/// </summary>
 public class UserRepository : Repository<User>
 {
-    // Thread-safe, lazy-initialized instance holder
     private static readonly Lazy<UserRepository> _instance = 
         new Lazy<UserRepository>(() => new UserRepository());
 
-    // Public entry point to access the one and only instance
+    /// <summary>Gets the singleton instance of <see cref="UserRepository"/>.</summary>
     public static UserRepository Instance => _instance.Value;
 
-    // Private constructor completely stops external 'new UserRepository()'
     private UserRepository() { }
+    /// <summary>The underlying file name is "users.ndjson".</summary>
     protected override string FileName => "users.ndjson";
 
+    /// <summary>Finds a user by their email address, or <c>null</c> if not found.</summary>
+    /// <param name="email">The email to search for.</param>
     public User FindByEmail(string email)
     {
         if (!File.Exists(FilePath)) return null;
