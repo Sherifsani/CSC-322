@@ -30,6 +30,9 @@ namespace Simulation
             Person person = new WhitePerson();
             person.Name = "sherif";
             person.Speak("I am new to C#, please be nice!");
+
+            B b = new B();
+            b.G();
         }
         
     }
