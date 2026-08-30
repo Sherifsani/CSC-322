@@ -24,3 +24,6 @@ packages/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local NDJSON data written by the repositories
+**/repository/db/
